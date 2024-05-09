@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
@@ -29,10 +30,13 @@ if table_element:
         if len(cols) >= 5:
             cols_data = [col.text.strip() for col in cols]
             if cols_data[0].strip() == "SOJA":
-                price = cols_data[3].replace("R$", "").replace("\xa0", "").strip()
+                price = cols_data[3].replace("R$", "").replace("\xa0", "").replace(",", ".").strip()
+                date_string = cols_data[2]
+                dt = datetime.strptime(date_string, "%d/%m/%Y %H:%M")  # assuming the format is DD/MM/YYYY HH:MM
                 print(f"Produto: {cols_data[0]}")
-                print(f"Preço: R${price}")
-                print(f"Data e Hora do Preço: {cols_data[2]}")
+                print(f"Preço: {price}")
+                print(f"Data e Hora do Preço: {dt.strftime('%Y-%m-%d %H:%M')}")
+                print(f"Unid. Padrão: {cols_data[4]}")
                 driver.quit()
                 break
 else:
