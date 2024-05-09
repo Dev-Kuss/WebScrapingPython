@@ -39,9 +39,8 @@ if table_element:
                 unidade_medida = cols_data[4]
 
                 with open('results.csv', 'a', newline='') as f:
-                    writer = csv.writer(f)
+                    writer = csv.writer(f, delimiter=',')
                     writer.writerow([Product, dt.strftime('%Y-%m-%d %H:%M'), price, unidade_medida])
-
 
                 print(f"Produto: {cols_data[0]}")
                 print(f"Preço: {price}")
