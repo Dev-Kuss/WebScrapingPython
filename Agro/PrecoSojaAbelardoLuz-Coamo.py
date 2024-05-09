@@ -1,5 +1,6 @@
 import time
 import csv
+import psycopg2
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
@@ -38,7 +39,7 @@ if table_element:
                 dt = datetime.strptime(date_string, "%d/%m/%Y %H:%M")
                 unidade_medida = cols_data[4]
 
-                with open('results.csv', 'a', newline='') as f:
+                with open('prices.csv', 'a', newline='') as f:
                     writer = csv.writer(f, delimiter=',')
                     writer.writerow([Product, dt.strftime('%Y-%m-%d %H:%M'), price, unidade_medida])
 
@@ -52,3 +53,27 @@ else:
     print("Table not found.")
 
 driver.quit()
+
+conn = psycopg2.connect(
+    host="localhost",
+    database="Agro",
+    user="postgres",
+    password="postgres")
+
+cur = conn.cursor()
+
+script_sql = """
+BEGIN;
+TRUNCATE TABLE prices;
+COPY prices (product, date_time, price, unit) 
+FROM 'C:\\Program Files\\PostgreSQL\\15\\data\\results.csv' 
+DELIMITER ',';
+COMMIT;
+"""
+
+cur.execute(script_sql)
+conn.commit()
+cur.close()
+conn.close()
+
+
